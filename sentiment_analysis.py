@@ -109,6 +109,30 @@ def min_max_days(freq):
     for date in min_days:
         print(date)
     
+def week_with_max_rev(rev_dates, freq):
+
+    i = 0
+    cur_date = rev_dates[0]
+    best_start = None
+    optimal = -1
+    n = len(rev_dates)
+    step = datetime.timedelta(days=7)
+    while i < n:
+        j = i
+        loc_val = 0
+        cur_date = get_datetime(rev_dates[i])
+        while j < n:
+            if (get_datetime(rev_dates[j]) - cur_date) > step:
+                break
+            if j > 0:
+                if rev_dates[j] != rev_dates[j - 1]:
+                    loc_val += freq[rev_dates[j]]
+            j += 1
+        i = j
+        if loc_val > optimal:
+            best_start = cur_date
+            optimal = loc_val
+    print("The best week from {} to {} had {} reviews".format(best_start.strftime("%x"), (best_start + step).strftime("%x"), optimal))
 
 def basic_stats(url):
     result = requests.get(url)
@@ -136,6 +160,8 @@ def basic_stats(url):
     avg_rev = total_reviews / no_of_weeks
     print("Average number of reviews: {}".format(avg_rev))
     freq = plot_reviews(rev_dates)
+    week_with_max_rev(rev_dates[::-1], freq)
     min_max_days(freq)
+
 
 basic_stats(url)
