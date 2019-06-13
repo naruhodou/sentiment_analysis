@@ -4,6 +4,8 @@ import csv
 import webbrowser
 import io
 import datetime
+import matplotlib.pyplot as plt
+import numpy as np
 
 url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Trekmunk-Dehradun_Dehradun_District_Uttarakhand.html'
 
@@ -64,7 +66,24 @@ def get_review_dates(url, total_reviews):
     #     print(date)
     return review_dates
 
-
+def plot_reviews(rev_dates):
+    temp_rev = rev_dates[::-1]
+    freq = {}
+    x = []
+    y = []
+    for date in temp_rev:
+        if date not in freq:
+            freq[date] = 1
+            x.append(date)
+        else:
+            freq[date] += 1
+    for date in x:
+        y.append(freq[date])
+    plt.xlabel('Date')
+    plt.ylabel('Frequency')
+    plt.plot(x, y)
+    plt.xticks(np.arange(0, len(x), 10))
+    plt.show()
 
 def basic_stats(url):
     result = requests.get(url)
@@ -91,5 +110,7 @@ def basic_stats(url):
     no_of_weeks = (d1 - d2).days // 7
     avg_rev = total_reviews / no_of_weeks
     print("Average number of reviews: {}".format(avg_rev))
+    plot_reviews(rev_dates)
+
 
 basic_stats(url)
