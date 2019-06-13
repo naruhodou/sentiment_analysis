@@ -66,6 +66,7 @@ def get_review_dates(url, total_reviews):
     #     print(date)
     return review_dates
 
+# returns dictionary of frequency after plotting
 def plot_reviews(rev_dates):
     temp_rev = rev_dates[::-1]
     freq = {}
@@ -84,6 +85,30 @@ def plot_reviews(rev_dates):
     plt.plot(x, y)
     plt.xticks(np.arange(0, len(x), 10))
     plt.show()
+    return freq
+
+def min_max_days(freq):
+    min_days = []
+    min_value = float('inf')
+    for date in freq:
+            min_value = min(min_value, freq[date])
+    for date in freq:
+        if freq[date] == min_value:
+            min_days.append(date)
+    max_days = []
+    max_value = -1
+    for date in freq:
+            max_value = max(max_value, freq[date])
+    for date in freq:
+        if freq[date] == max_value:
+            max_days.append(date)
+    print('Day(s) with maximum reviews: ')
+    for date in max_days:
+        print(date)
+    print('Day(s) with minimum reviews: ')
+    for date in min_days:
+        print(date)
+    
 
 def basic_stats(url):
     result = requests.get(url)
@@ -110,7 +135,7 @@ def basic_stats(url):
     no_of_weeks = (d1 - d2).days // 7
     avg_rev = total_reviews / no_of_weeks
     print("Average number of reviews: {}".format(avg_rev))
-    plot_reviews(rev_dates)
-
+    freq = plot_reviews(rev_dates)
+    min_max_days(freq)
 
 basic_stats(url)
