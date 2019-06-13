@@ -3,11 +3,41 @@ from bs4 import BeautifulSoup
 import csv                  
 import webbrowser
 import io
+import datetime
 
 url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Trekmunk-Dehradun_Dehradun_District_Uttarakhand.html'
 
+def get_datetime(date_str):
+    i = 0
+    date = ""
+    month = ""
+    year = int(date_str[len(date_str) - 4:])
+    while i < len(date_str):
+        if date_str[i].isnumeric():
+            date += date_str[i] 
+            i += 1
+        else:
+            i += 1
+            break
+    date = int(date)
+    months = {"January" : 1, "February" : 2,
+              "March" : 3, "April" : 4,
+              "May" : 5, "June" : 6, "July" : 7,
+              "August" : 8, "September" : 9,
+              "October" : 10, "November" : 11,
+              "December" : 12}
+    while i < len(date_str):
+        if date_str[i].isalpha():
+            month += date_str[i]
+            i += 1
+        else:
+            break
+    month = months[month]
+    return datetime.datetime(year, month, date)
 
-def review_dates(url, total_reviews):
+
+
+def get_review_dates(url, total_reviews):
     url_temp1 = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-or'
     url_temp2 = '-Trekmunk-Dehradun_Dehradun_District_Uttarakhand.html'
     review_dates = []
@@ -30,8 +60,10 @@ def review_dates(url, total_reviews):
                 review_dates.append(span.attrs['title'])
             except:
                 continue
-    print('Start date of reviews: {}'.format(review_dates[total_reviews - 1]))
-    print('End date of reviews: {}'.format(review_dates[0]))
+    # for date in review_dates:
+    #     print(date)
+    return review_dates
+
 
 
 def basic_stats(url):
@@ -49,6 +81,15 @@ def basic_stats(url):
     if total_reviews != -1:
         print("Total Reviews: {}".format(total_reviews))
     total_reviews = int(total_reviews)
-    review_dates(url, total_reviews)
+    rev_dates = get_review_dates(url, total_reviews)
+    if len(rev_dates) > 0:
+        print('Start date of reviews: {}'.format(rev_dates[total_reviews - 1]))
+        print('End date of reviews: {}'.format(rev_dates[0]))
+        
+    d1 = get_datetime(rev_dates[0])
+    d2 = get_datetime(rev_dates[total_reviews - 1])
+    no_of_weeks = (d1 - d2).days // 7
+    avg_rev = total_reviews / no_of_weeks
+    print("Average number of reviews: {}".format(avg_rev))
 
 basic_stats(url)
