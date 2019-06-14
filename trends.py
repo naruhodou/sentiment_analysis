@@ -51,23 +51,23 @@ def monogram_trends():
     plt.show()
 
 
-def get_plot(f, g):
+def get_plot(f, g, s):
     x = sorted(f, key=f.__getitem__, reverse=True)
     y = []
     for i in x:
         y.append(f[i])
     n = min(len(x), 10)
     plt.subplot(1, 2, 1)
-    plt.title('Positive Bigrams')
+    plt.title('Positive ' + s)
     plt.barh(x[:n], y[:n])
     x = sorted(g, key=g.__getitem__, reverse=True)
     y = []
     for i in x:
         y.append(g[i])
-    n = min(len(x), 10)
+    n = min(len(x), 100)
     plt.subplot(1, 2, 2)
     plt.barh(x[:n], y[:n])
-    plt.title('Negitive Bigrams')
+    plt.title('Negitive ' + s)
     plt.show()
 
 def bigram_trends():
@@ -98,10 +98,41 @@ def bigram_trends():
             else:
                 nf[bigram] += 1
 
-    get_plot(pf, nf)
+    get_plot(pf, nf, 'Bigrams')
+
+def trigram_trends():
+    f = open("stemmed.txt")
+    raw = f.read()
+    tokens = nltk.word_tokenize(raw)
+    #Create your trigrams
+    bgs = nltk.trigrams(tokens)
+    #compute frequency distribution for all the trigrams in the text
+    fdist = nltk.FreqDist(bgs)
+    pos = []
+    neg = []
+    sid = SentimentIntensityAnalyzer()    
+    pos_trigrams=[]
+    neg_trigrams=[]
+    pf = {}
+    nf = {}
+    for key in fdist:
+        trigram = key[0] + ' ' + key[1] + ' ' + key[2]
+        if (sid.polarity_scores(trigram)['compound']) >= 0.5:
+            if trigram not in pf:
+                pf[trigram] = 1
+            else:
+                pf[trigram] += 1
+        elif (sid.polarity_scores(trigram)['compound']) <= -0.5:
+            if trigram not in nf:
+                nf[trigram] = 1
+            else:
+                nf[trigram] += 1
+
+    get_plot(pf, nf, 'Trigrams')
 
 
 def trends():
     nltk.download('vader_lexicon')
     # monogram_trends()
-    bigram_trends()
+    # bigram_trends()
+    trigram_trends()
