@@ -3,6 +3,7 @@ import word_analysis
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 def monogram_trends():
     sid = SentimentIntensityAnalyzer()
@@ -157,11 +158,49 @@ def ngram_with_neg(n, s1):
     plt.barh(x[:n], y[:n])
     plt.show()
 
+
+def sentiment_score(sentence):
+    analyser = SentimentIntensityAnalyzer()
+    score = analyser.polarity_scores(sentence)
+    return score['compound']
+
+def best_review():
+    f = open("stemmed.txt")
+    s_reviews = f.read()
+    s_reviews = s_reviews.split('\n')
+    best_score = -float('inf')
+    best_rev = ""
+    f = open("reviews.txt")
+    reviews = f.read()
+    reviews = reviews.split('\n')
+    for i in range(len(s_reviews)):
+        score = sentiment_score(s_reviews[i])
+        if score > best_score:
+            best_rev, best_score = reviews[i], score
+    print("Best Review(score = {}): ".format(best_score), best_rev)
+
+def worst_review():
+    f = open("stemmed.txt")
+    s_reviews = f.read()
+    s_reviews = s_reviews.split('\n')
+    worst_score = float('inf')
+    worst_rev = ""
+    f = open("reviews.txt")
+    reviews = f.read()
+    reviews = reviews.split('\n')
+    for i in range(len(s_reviews)):
+        score = sentiment_score(s_reviews[i])
+        if score < worst_score:
+            worst_rev, worst_score = reviews[i], score
+    print("Worst Review(score = {}): ".format(worst_score), worst_rev)
+
 def trends():
-    nltk.download('vader_lexicon')
+    # nltk.download('vader_lexicon')
     # monogram_trends()
     # bigram_trends()
     # trigram_trends()
-    ngram_with_neg(2, 'Bigrams')
-    ngram_with_neg(3, 'Trigrams')
+    # ngram_with_neg(2, 'Bigrams')
+    # ngram_with_neg(3, 'Trigrams')
+    best_review()
+    worst_review()
 
