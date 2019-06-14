@@ -4,9 +4,7 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import matplotlib.pyplot as plt
 
-
-def trends():
-    nltk.download('vader_lexicon')
+def monogram_trends():
     sid = SentimentIntensityAnalyzer()
     pos_word_list=[]
     neu_word_list=[]
@@ -51,3 +49,59 @@ def trends():
     plt.barh(neg[:n], y[:n])
     plt.title('Negitive Words contributing to sentiments')
     plt.show()
+
+
+def get_plot(f, g):
+    x = sorted(f, key=f.__getitem__, reverse=True)
+    y = []
+    for i in x:
+        y.append(f[i])
+    n = min(len(x), 10)
+    plt.subplot(1, 2, 1)
+    plt.title('Positive Bigrams')
+    plt.barh(x[:n], y[:n])
+    x = sorted(g, key=g.__getitem__, reverse=True)
+    y = []
+    for i in x:
+        y.append(g[i])
+    n = min(len(x), 10)
+    plt.subplot(1, 2, 2)
+    plt.barh(x[:n], y[:n])
+    plt.title('Negitive Bigrams')
+    plt.show()
+
+def bigram_trends():
+    f = open("stemmed.txt")
+    raw = f.read()
+    tokens = nltk.word_tokenize(raw)
+    #Create your bigrams
+    bgs = nltk.bigrams(tokens)
+    #compute frequency distribution for all the bigrams in the text
+    fdist = nltk.FreqDist(bgs)
+    pos = []
+    neg = []
+    sid = SentimentIntensityAnalyzer()    
+    pos_bigrams=[]
+    neg_bigrams=[]
+    pf = {}
+    nf = {}
+    for key in fdist:
+        bigram = key[0] + ' ' + key[1]
+        if (sid.polarity_scores(bigram)['compound']) >= 0.5:
+            if bigram not in pf:
+                pf[bigram] = 1
+            else:
+                pf[bigram] += 1
+        elif (sid.polarity_scores(bigram)['compound']) <= -0.5:
+            if bigram not in nf:
+                nf[bigram] = 1
+            else:
+                nf[bigram] += 1
+
+    get_plot(pf, nf)
+
+
+def trends():
+    nltk.download('vader_lexicon')
+    # monogram_trends()
+    bigram_trends()
