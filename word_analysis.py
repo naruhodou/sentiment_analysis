@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import csv                  
 import webbrowser
 import io 
+import string
 import nltk
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
@@ -60,10 +61,12 @@ url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Tr
 #     f.close()
 
 def remove_stop_and_stem(file):
-    nltk.download('stopwords')
     stop_words = set(stopwords.words('english')) 
     f = open(file) 
-    words = f.read() 
+    words = f.read()
+    words = words.translate(str.maketrans('', '', string.punctuation))
+    if '.' in words:
+        print("Hai saala")
     words = words.split(' ')
     for word in words:
         if word not in stop_words: 
@@ -73,7 +76,7 @@ def remove_stop_and_stem(file):
     f = open('filtered.txt')
     stem_file = 'stemmed.txt'
     words = f.read()
-    words = words.split()
+    words = words.split(' ')
     ps = PorterStemmer()
     for word in words:
         appendFile = open(stem_file,'a') 
@@ -101,8 +104,36 @@ def most_common_words():
     plt.barh(word_list[: n], y_freq[: n])
     plt.show()
 
+def bigram_analysis():
+    f = open('filtered.txt')
+    raw = f.read()
+
+    tokens = nltk.word_tokenize(raw)
+
+    #Create your bigrams
+    bgs = nltk.bigrams(tokens)
+
+    #compute frequency distribution for all the bigrams in the text
+    fdist = nltk.FreqDist(bgs)
+    x_bg = sorted(fdist, key=fdist.__getitem__, reverse=True)
+    x = []
+    for i in x_bg:
+        x.append(i[0] + ' ' + i[1])
+    y_freq = []
+    for bg in x_bg:
+            y_freq.append(fdist[bg])
+    
+    n = min(10, len(y_freq))
+    plt.barh(x[: n], y_freq[: n])
+    plt.show()
+
 def word_analysis():
+    # nlkt downloads
+    nltk.download('stopwords')
+    nltk.download('punkt')
+
     # get_all_reviews(url)
     file = 'reviews.txt'
     # remove_stop_and_stem(file)
-    most_common_words()
+    # most_common_words()
+    bigram_analysis()
