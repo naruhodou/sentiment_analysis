@@ -2,12 +2,16 @@ import requests
 from bs4 import BeautifulSoup 
 import csv                  
 import webbrowser
-import io
+import io 
+import nltk
+from nltk.corpus import stopwords 
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer 
+from nltk.tokenize import word_tokenize 
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import basic_stat
-from selenium import webdriver
 import time
 
 url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Trekmunk-Dehradun_Dehradun_District_Uttarakhand.html'
@@ -55,6 +59,50 @@ url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Tr
 #         page_ind += 10
 #     f.close()
 
+def remove_stop_and_stem(file):
+    nltk.download('stopwords')
+    stop_words = set(stopwords.words('english')) 
+    f = open(file) 
+    words = f.read() 
+    words = words.split(' ')
+    for word in words:
+        if word not in stop_words: 
+            appendFile = open('filtered.txt','a') 
+            appendFile.write(word + " ") 
+            appendFile.close() 
+    f = open('filtered.txt')
+    stem_file = 'stemmed.txt'
+    words = f.read()
+    words = words.split()
+    ps = PorterStemmer()
+    for word in words:
+        appendFile = open(stem_file,'a') 
+        appendFile.write(ps.stem(word) + " ") 
+        appendFile.close()
+
+def most_common_words():
+    freq = {}
+    f = open('stemmed.txt')
+    words = f.read()
+    words = words.split()
+    for word in words:
+        if word not in freq:
+            freq[word] = 1
+        else:
+            freq[word] += 1
+
+    word_list = sorted(freq, key=freq.__getitem__, reverse=True)
+
+    y_freq = []
+    for word in word_list:
+            y_freq.append(freq[word])
+    
+    n = min(10, len(y_freq))
+    plt.barh(word_list[: n], y_freq[: n])
+    plt.show()
+
 def word_analysis():
     # get_all_reviews(url)
-    pass
+    file = 'reviews.txt'
+    # remove_stop_and_stem(file)
+    most_common_words()
