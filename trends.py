@@ -131,8 +131,37 @@ def trigram_trends():
     get_plot(pf, nf, 'Trigrams')
 
 
+def ngram_with_neg(n, s1):
+    n += 1
+    f = open('stemmed.txt')
+    words = f.read()
+    ng = nltk.ngrams(words.split(), n)
+    f = {}
+    sid = SentimentIntensityAnalyzer()
+    for g in ng:
+        s = ""
+        for i in range(1, n):
+            s += (g[i] + ' ')
+        s = s[:len(s) - 1]
+        if (sid.polarity_scores(g[0])['compound']) <= -0.5:
+            if s not in f:
+                f[s] = 1
+            else:
+                f[s] += 1
+    x = sorted(f, key=f.__getitem__, reverse=True)
+    y = []
+    for i in x:
+        y.append(f[i])
+    n = min(len(x), 100)
+    plt.title(s1 + ' preceded with negative words')
+    plt.barh(x[:n], y[:n])
+    plt.show()
+
 def trends():
     nltk.download('vader_lexicon')
     # monogram_trends()
     # bigram_trends()
-    trigram_trends()
+    # trigram_trends()
+    ngram_with_neg(2, 'Bigrams')
+    ngram_with_neg(3, 'Trigrams')
+
