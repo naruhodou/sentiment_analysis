@@ -134,6 +134,10 @@ def week_with_max_rev(rev_dates, freq):
             optimal = loc_val
     print("The best week from {} to {} had {} reviews".format(best_start.strftime("%x"), (best_start + step).strftime("%x"), optimal))
 
+def get_rev_dates(rev_dates):
+    for date in rev_dates[::-1]:
+        print(date)
+
 def basic_stats(url):
     global total_reviews
     result = requests.get(url)
