@@ -135,6 +135,7 @@ def week_with_max_rev(rev_dates, freq):
     print("The best week from {} to {} had {} reviews".format(best_start.strftime("%x"), (best_start + step).strftime("%x"), optimal))
 
 def basic_stats(url):
+    global total_reviews
     result = requests.get(url)
     if result.status_code != 200:
         print('Could not fetch data!!!!')
