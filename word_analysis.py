@@ -127,6 +127,31 @@ def bigram_analysis():
     plt.barh(x[: n], y_freq[: n])
     plt.show()
 
+def trigram_analysis():
+    f = open('stemmed.txt')
+    raw = f.read()
+
+    tokens = nltk.word_tokenize(raw)
+
+    #Create your bigrams
+    tgs = nltk.trigrams(tokens)
+
+    fdist = nltk.FreqDist(tgs)
+    x_tg = sorted(fdist, key=fdist.__getitem__, reverse=True)
+    x = []
+    for i in x_tg:
+        x.append(i[0] + ' ' + i[1] + ' ' + i[2])
+    y_freq = []
+    for bg in x_tg:
+            y_freq.append(fdist[bg])
+    
+    for key in fdist:
+        print(key)
+        break
+    n = min(10, len(y_freq))
+    plt.barh(x[: n], y_freq[: n])
+    plt.show()
+
 def word_analysis():
     # nlkt downloads
     nltk.download('stopwords')
@@ -136,4 +161,5 @@ def word_analysis():
     file = 'reviews.txt'
     # remove_stop_and_stem(file)
     # most_common_words()
-    bigram_analysis()
+    # bigram_analysis()
+    trigram_analysis()
