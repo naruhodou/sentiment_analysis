@@ -17,13 +17,6 @@ import time
 
 url = 'https://www.tripadvisor.in/Attraction_Review-g297687-d13171435-Reviews-Trekmunk-Dehradun_Dehradun_District_Uttarakhand.html'
 
-# options = webdriver.ChromeOptions()
-# options.add_argument('--ignore-certificate-errors')
-# options.add_argument('--incognito')
-# options.add_argument('--headless')
-# # change it to where you have it
-# path = "/home/rohan/Downloads/chromedriver_linux64/chromedriver"
-# driver = webdriver.Chrome(path, chrome_options=options)
 
 
 # to get all the latest reviews and store it in a file
@@ -65,8 +58,6 @@ def remove_stop_and_stem(file):
     f = open(file) 
     words = f.read()
     words = words.translate(str.maketrans('', '', string.punctuation))
-    if '.' in words:
-        print("Hai saala")
     words = words.split(' ')
     for word in words:
         if word not in stop_words: 
@@ -105,13 +96,9 @@ def most_common_words():
     plt.show()
 
 def bigram_analysis():
-    f = open('filtered.txt')
+    f = open('stemmed.txt')
     raw = f.read()
-
-    tokens = nltk.word_tokenize(raw)
-
-    #Create your bigrams
-    bgs = nltk.bigrams(tokens)
+    bgs = nltk.ngrams(raw.split(), 2)
 
     #compute frequency distribution for all the bigrams in the text
     fdist = nltk.FreqDist(bgs)
@@ -133,8 +120,7 @@ def trigram_analysis():
 
     tokens = nltk.word_tokenize(raw)
 
-    #Create your bigrams
-    tgs = nltk.trigrams(tokens)
+    tgs = nltk.ngrams(raw.split(), 3)
 
     fdist = nltk.FreqDist(tgs)
     x_tg = sorted(fdist, key=fdist.__getitem__, reverse=True)
@@ -161,5 +147,5 @@ def word_analysis():
     file = 'reviews.txt'
     # remove_stop_and_stem(file)
     # most_common_words()
-    # bigram_analysis()
-    trigram_analysis()
+    bigram_analysis()
+    # trigram_analysis()
