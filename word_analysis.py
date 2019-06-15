@@ -96,7 +96,7 @@ def most_common_words():
     plt.show()
 
 def bigram_analysis():
-    f = open('stemmed.txt')
+    f = open('filtered.txt')
     raw = f.read()
     bgs = nltk.ngrams(raw.split(), 2)
 
@@ -112,10 +112,11 @@ def bigram_analysis():
     
     n = min(10, len(y_freq))
     plt.barh(x[: n], y_freq[: n])
+    plt.title('Frequency of most common bigrams')
     plt.show()
 
 def trigram_analysis():
-    f = open('stemmed.txt')
+    f = open('filtered.txt')
     raw = f.read()
 
     tokens = nltk.word_tokenize(raw)
@@ -136,6 +137,7 @@ def trigram_analysis():
         break
     n = min(10, len(y_freq))
     plt.barh(x[: n], y_freq[: n])
+    plt.title('Frequency of most common Trigrams')
     plt.show()
 
 def word_analysis():
@@ -146,6 +148,6 @@ def word_analysis():
     # get_all_reviews(url)
     file = 'reviews.txt'
     # remove_stop_and_stem(file)
-    # most_common_words()
-    bigram_analysis()
+    most_common_words()
+    # bigram_analysis()
     # trigram_analysis()

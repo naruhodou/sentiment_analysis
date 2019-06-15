@@ -58,21 +58,23 @@ def get_plot(f, g, s):
     for i in x:
         y.append(f[i])
     n = min(len(x), 10)
-    plt.subplot(1, 2, 1)
+    plt.subplot(2, 1, 1)
     plt.title('Positive ' + s)
     plt.barh(x[:n], y[:n])
+    # plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     x = sorted(g, key=g.__getitem__, reverse=True)
     y = []
     for i in x:
         y.append(g[i])
-    n = min(len(x), 100)
-    plt.subplot(1, 2, 2)
+    n = min(len(x), 10)
+    plt.subplot(2, 1, 2)
     plt.barh(x[:n], y[:n])
+    # plt.xticks(x[:n], rotation='vertical')
     plt.title('Negitive ' + s)
     plt.show()
 
 def bigram_trends():
-    f = open("stemmed.txt")
+    f = open("filtered.txt")
     raw = f.read()
     tokens = nltk.word_tokenize(raw)
     #Create your bigrams
@@ -102,7 +104,7 @@ def bigram_trends():
     get_plot(pf, nf, 'Bigrams')
 
 def trigram_trends():
-    f = open("stemmed.txt")
+    f = open("filtered.txt")
     raw = f.read()
     tokens = nltk.word_tokenize(raw)
     #Create your trigrams
@@ -134,7 +136,7 @@ def trigram_trends():
 
 def ngram_with_neg(n, s1):
     n += 1
-    f = open('stemmed.txt')
+    f = open('filtered.txt')
     words = f.read()
     ng = nltk.ngrams(words.split(), n)
     f = {}
@@ -153,7 +155,7 @@ def ngram_with_neg(n, s1):
     y = []
     for i in x:
         y.append(f[i])
-    n = min(len(x), 100)
+    n = min(len(x), 10)
     plt.title(s1 + ' preceded with negative words')
     plt.barh(x[:n], y[:n])
     plt.show()
@@ -165,7 +167,7 @@ def sentiment_score(sentence):
     return score['compound']
 
 def best_review():
-    f = open("stemmed.txt")
+    f = open("filtered.txt")
     s_reviews = f.read()
     s_reviews = s_reviews.split('\n')
     best_score = -float('inf')
@@ -180,7 +182,7 @@ def best_review():
     print("Best Review(score = {}): ".format(best_score), best_rev)
 
 def worst_review():
-    f = open("stemmed.txt")
+    f = open("filtered.txt")
     s_reviews = f.read()
     s_reviews = s_reviews.split('\n')
     worst_score = float('inf')
@@ -200,7 +202,7 @@ def trends():
     # bigram_trends()
     # trigram_trends()
     # ngram_with_neg(2, 'Bigrams')
-    # ngram_with_neg(3, 'Trigrams')
-    best_review()
-    worst_review()
+    ngram_with_neg(3, 'Trigrams')
+    # best_review()
+    # worst_review()
 
